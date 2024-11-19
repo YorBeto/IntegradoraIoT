@@ -15,10 +15,13 @@ class AuthController extends Controller
     {
         $credentials = $request->only('email', 'password');
 
-        // Buscar el usuario por email
+
         $user = User::where('email', $credentials['email'])->first();
 
-        // Validar que exista y la contraseña coincida
+        if($user->email_verified_at == null){
+            return response()->json(['error' => 'Cuenta no activada'], 401);
+        }
+
         if (!$user || !Hash::check($credentials['password'], $user->password)) {
             return response()->json(['error' => 'Credenciales inválidas'], 401);
         }

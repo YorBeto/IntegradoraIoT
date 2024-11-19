@@ -24,6 +24,9 @@ Route::get('activar-cuenta/{user}', [ActivationController::class, 'activarCuenta
      ->name('activation.route')
      ->middleware('signed'); 
 
-Route::get('restablecer-contrasena/{user}', [ActivationController::class, 'Restablecimiento'])
-     ->name('reset.route')
-     ->middleware('signed');
+     Route::get('/restablecer-contrasena/{user}', [ActivationController::class, 'mostrarFormulario'])
+    ->name('reset.route')
+    ->middleware('signed');
+
+Route::post('/restablecer', [ActivationController::class, 'actualizarContraseña'])
+    ->name('password.update');

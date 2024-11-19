@@ -4,6 +4,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\PersonasController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\ActivationController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -18,6 +19,7 @@ use App\Http\Controllers\AuthController;
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
-Route::post('restablecer-contrasena', [PersonasController::class, 'restablecercontrasena']);
+Route::post('/restablecer-contrasena',[PersonasController::class, 'restablecercontrasena']);
+
 Route::post('/registro', [PersonasController::class, 'registro']);
 Route::post('/login', [AuthController::class, 'login']);
