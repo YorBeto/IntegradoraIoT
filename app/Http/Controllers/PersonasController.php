@@ -8,13 +8,13 @@ use DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\Mail;
-use App\Models\User; // Asegúrate de tener el modelo User importado
+use App\Models\User;
+use App\Models\Persona; 
 
 class PersonasController extends Controller
 {
     public function registro(Request $request)
     {
-        // Validación de los datos del usuario
         $validator = Validator::make($request->all(), [
             'email' => 'required|email|unique:users,email', 
             'password' => 'required|min:6',  
@@ -26,7 +26,6 @@ class PersonasController extends Controller
             'telefono' => 'nullable|string|max:20',  
         ]);
 
-        // Si la validación falla, devolver errores
         if ($validator->fails()) {
             return response()->json([
                 'message' => 'Errores de validación',
@@ -34,7 +33,6 @@ class PersonasController extends Controller
             ], 400);
         }
 
-        // Insertar los datos en la base de datos usando el procedimiento almacenado
         DB::statement('CALL insertar_datos(?, ?, ?, ?, ?, ?, ?, ?, ?)', [
             $request->email, 
             Hash::make($request->password), 
@@ -47,20 +45,47 @@ class PersonasController extends Controller
             $request->telefono ?? null  
         ]);
 
-        // Obtener el usuario recién registrado (asumimos que su email es único)
         $user = User::where('email', $request->email)->first();
 
-        // Generar el enlace de activación con una firma única
+        $persona = $user->persona; 
+
+        if (!$persona) {
+            return response()->json(['message' => 'No se encontró la persona asociada al usuario.'], 400);
+        }
+
         $activationLink = URL::temporarySignedRoute(
-            'activation.route', // Nombre de la ruta que manejará la activación
-            now()->addMinutes(60), // Tiempo de expiración del enlace
+            'activation.route', 
+            now()->addMinutes(60),
             ['user' => $user->id]
         );
 
-        // Enviar el correo de activación
-        Mail::to($user->email)->send(new \App\Mail\AccountActivationMail($user, $activationLink));
+        Mail::to($user->email)->send(new \App\Mail\AccountActivationMail($persona, $activationLink));
 
-        // Retornar una respuesta de éxito
         return response()->json(['message' => 'Usuario registrado exitosamente, revisa tu correo para activar tu cuenta.'], 201);
+    }
+
+    public function restablecercontrasena(Request $request){
+        $validator = Validator::make($request->all(), [
+            'email' => 'required|email|exists:users,email'
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'message' => 'Errores de validación',
+                'errors' => $validator->errors()
+            ], 400);
+        }
+
+        $user = User::where('email', $request->email)->first();
+
+        $resetLink = URL::temporarySignedRoute(
+            'reset.route', 
+            now()->addMinutes(60),
+            ['user' => $user->id]
+        );
+
+        Mail::to($user->email)->send(new \App\Mail\PasswordReset($user, $resetLink));
+
+        return response()->json(['message' => 'Se ha enviado un enlace a tu correo para restablecer tu contraseña.'], 200);
     }
 }

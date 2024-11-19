@@ -5,6 +5,7 @@ namespace App\Mail;
 use Illuminate\Mail\Mailable;
 use Illuminate\Bus\Queueable;
 use Illuminate\Queue\SerializesModels;
+use App\Models\Persona;
 
 class AccountActivationMail extends Mailable
 {
@@ -16,10 +17,10 @@ class AccountActivationMail extends Mailable
     /**
      * Create a new message instance.
      *
-     * @param $user
-     * @param $activationLink
+     * @param Persona $persona
+     * @param string $activationLink
      */
-    public function __construct($persona, $activationLink)
+    public function __construct(Persona $persona, $activationLink)
     {
         $this->persona = $persona;
         $this->activationLink = $activationLink;
@@ -33,7 +34,9 @@ class AccountActivationMail extends Mailable
     public function build()
     {
         return $this->subject('Activación de Cuenta')
-                    ->view('emails.account_activation');
-                    
+                    ->view('emails.account_activation', [
+                        'persona' => $this->persona,
+                        'activationLink' => $this->activationLink
+                    ]);
     }
 }

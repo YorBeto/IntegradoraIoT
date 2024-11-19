@@ -9,7 +9,11 @@ class User extends Authenticatable implements JWTSubject
 {
     protected $fillable = ['email', 'password', 'nombre', 'apellido_paterno', 'apellido_materno'];
 
-    // Obligatorio para JWT
+    public function persona()
+    {
+        return $this->hasOne(Persona::class, 'usuario_id');
+    }
+
     public function getJWTIdentifier()
     {
         return $this->getKey();
