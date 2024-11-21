@@ -23,3 +23,6 @@ Route::post('/restablecer-contrasena',[PersonasController::class, 'restablecerco
 
 Route::post('/registro', [PersonasController::class, 'registro']);
 Route::post('/login', [AuthController::class, 'login']);
+
+Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth:api');
+

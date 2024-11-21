@@ -89,14 +89,12 @@
     <div class="container">
         <h1 class="header">¡Felicidades!</h1>
         <div class="image">
-            <img src="https://via.placeholder.com/150/ff6347/ffffff?text=Bienvenido" alt="Cuenta Activada">
+        <img src="{{ asset('images/GamyG1.png') }}" alt="Cuenta Activada">
         </div>
         <p class="message">Tu cuenta ha sido activada con éxito. Ahora puedes explorar todas nuestras funciones y divertirte aprendiendo.</p>
-        <a href="/" class="button">¡Empezar ahora!</a>
     </div>
 
     <script>
-        // Generar confeti dinámicamente
         const confettiWrapper = document.getElementById('confetti-wrapper');
 
         function createConfetti() {

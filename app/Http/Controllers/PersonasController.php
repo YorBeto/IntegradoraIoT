@@ -15,6 +15,12 @@ class PersonasController extends Controller
 {
     public function registro(Request $request)
     {
+
+    $request->merge([
+        'apellido_paterno' => $request->input('apellido'),
+        'fecha_nacimiento' => $request->input('fechaNacimiento'),
+    ]);
+
         $validator = Validator::make($request->all(), [
             'email' => 'required|email|unique:users,email', 
             'password' => 'required|min:6',  
