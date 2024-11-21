@@ -11,17 +11,27 @@ use Illuminate\Support\Facades\Url;
 class ActivationController extends Controller
 {
     public function activarCuenta(Request $request, User $user)
-    {
-        if (!$request->hasValidSignature()) {
-            return response()->json(['message' => 'El enlace ha expirado o no es válido.'], 400);
-        }
-
-        // Activar la cuenta del usuario
-        $user->email_verified_at = now();
-        $user->save();
-
-        return view('activationSuccess');
+{
+    if (!$request->hasValidSignature()) {
+        return response()->json(['message' => 'El enlace ha expirado o no es válido.'], 400);
     }
+
+    $user->email_verified_at = now();
+    $user->save();
+
+    $rolUsuario = \App\Models\Rol::where('nombre', 'usuario')->first();
+
+    if ($rolUsuario) {
+        \DB::table('roles_usuarios')
+            ->updateOrInsert(
+                ['usuario_id' => $user->id], 
+                ['rol_id' => $rolUsuario->id, 'updated_at' => now()] 
+            );
+    }
+
+    return view('activationSuccess');
+}
+
 
     public function mostrarFormulario(Request $request, $userId)
 {
