@@ -13,22 +13,18 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('estadistica_partidas', function (Blueprint $table) {
-            $table->unsignedBigInteger('id_partida');
-            $table->unsignedBigInteger('id_estadistica_1');
-            $table->string('valor_1', 255);
-            $table->unsignedBigInteger('id_estadistica_2');
-            $table->string('valor_2', 255);
-            $table->unsignedBigInteger('id_estadistica_3');
-            $table->string('valor_3', 255);
-            $table->primary(['id_partida', 'id_estadistica_1', 'id_estadistica_2', 'id_estadistica_3']);
-            $table->foreign('id_partida')->references('id_partida')->on('partidas')->onDelete('cascade');
-            $table->foreign('id_estadistica_1')->references('id_estadistica')->on('estadistica_tipos');
-            $table->foreign('id_estadistica_2')->references('id_estadistica')->on('estadistica_tipos');
-            $table->foreign('id_estadistica_3')->references('id_estadistica')->on('estadistica_tipos');
+        Schema::create('estadisticas_generales', function (Blueprint $table) {
+            $table->unsignedBigInteger('id_kid');
+            $table->unsignedBigInteger('id_juego');
+            $table->float('tiempo_jugado_total')->default(0);
+            $table->integer('numero_partidas')->default(0);
+            $table->primary(['id_kid', 'id_juego']);
+            $table->foreign('id_kid')->references('id_kid')->on('kids')->onDelete('cascade');
+            $table->foreign('id_juego')->references('id_juego')->on('juegos')->onDelete('cascade');
             $table->timestamps();
         });
     }
+    
 
     /**
      * Reverse the migrations.

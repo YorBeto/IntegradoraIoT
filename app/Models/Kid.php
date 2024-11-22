@@ -9,17 +9,22 @@ class Kid extends Model
 {
     use HasFactory;
 
-    protected $table = 'kid';
+    protected $table = 'kids';
 
-    protected $fillable = ['nombre', 'edad', 'foto_perfil', 'id_tutor'];
+    protected $fillable = [
+        'nombre',
+        'edad',
+        'foto_perfil',
+        'id_tutor',
+    ];
 
     public function tutor()
     {
         return $this->belongsTo(Tutor::class, 'id_tutor');
     }
 
-    public function partidas()
+    public function estadisticasGenerales()
     {
-        return $this->hasMany(Partida::class, 'id_kid');
+        return $this->hasMany(EstadisticasGenerales::class, 'id_kid');
     }
 }
