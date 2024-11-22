@@ -7,6 +7,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Url;
+use Illuminate\Support\Facades\File;
 
 class ActivationController extends Controller
 {
@@ -56,5 +57,21 @@ public function actualizarContraseña(Request $request)
     return view('passwordResetSuccess');
 }
 
+    public function show()
+    {
+        $filename = 'GamyG1.png';
+        $path = public_path('images/' . $filename);
 
+        if (!File::exists($path)) {
+            abort(404);
+        }
+
+        $file = File::get($path);
+        $type = File::mimeType($path);
+
+        $response = response($file, 200);
+        $response->header("Content-Type", $type);
+
+        return $response;
+    }
 }
