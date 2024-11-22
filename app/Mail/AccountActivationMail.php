@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Mail;
 
 use Illuminate\Mail\Mailable;
@@ -24,6 +23,7 @@ class AccountActivationMail extends Mailable
     {
         $this->persona = $persona;
         $this->activationLink = $activationLink;
+        // Usamos embed() para insertar la imagen embebida
     }
 
     /**
@@ -36,7 +36,7 @@ class AccountActivationMail extends Mailable
         return $this->subject('Activación de Cuenta')
                     ->view('emails.account_activation', [
                         'persona' => $this->persona,
-                        'activationLink' => $this->activationLink
+                        'activationLink' => $this->activationLink,
                     ]);
     }
 }

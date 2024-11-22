@@ -16,6 +16,8 @@ return new class extends Migration
         Schema::create('kids', function (Blueprint $table) {
             $table->id('id_kid');
             $table->string('nombre', 50);
+            $table->string('apellido_paterno', 50);
+            $table->enum('sexo', ['Masculino', 'Femenino']);
             $table->integer('edad');
             $table->string('foto_perfil', 255)->nullable();
             $table->unsignedBigInteger('id_tutor');

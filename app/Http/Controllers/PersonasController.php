@@ -15,6 +15,12 @@ class PersonasController extends Controller
 {
     public function registro(Request $request)
     {
+
+    $request->merge([
+        'apellido_paterno' => $request->input('apellido'),
+        'fecha_nacimiento' => $request->input('fechaNacimiento'),
+    ]);
+
         $validator = Validator::make($request->all(), [
             'email' => 'required|email|unique:users,email', 
             'password' => 'required|min:6',  
@@ -64,28 +70,30 @@ class PersonasController extends Controller
         return response()->json(['message' => 'Usuario registrado exitosamente, revisa tu correo para activar tu cuenta.'], 201);
     }
 
-    public function restablecercontrasena(Request $request){
+    public function restablecercontrasena(Request $request)
+    {
         $validator = Validator::make($request->all(), [
-            'email' => 'required|email|exists:users,email'
+            'email' => 'required|email|exists:users,email',
         ]);
-
+    
         if ($validator->fails()) {
             return response()->json([
                 'message' => 'Errores de validación',
                 'errors' => $validator->errors()
             ], 400);
         }
-
+    
         $user = User::where('email', $request->email)->first();
-
+    
         $resetLink = URL::temporarySignedRoute(
             'reset.route', 
-            now()->addMinutes(60),
+            now()->addMinutes(60), 
             ['user' => $user->id]
         );
-
+    
         Mail::to($user->email)->send(new \App\Mail\PasswordReset($user, $resetLink));
-
+    
         return response()->json(['message' => 'Se ha enviado un enlace a tu correo para restablecer tu contraseña.'], 200);
     }
+    
 }
