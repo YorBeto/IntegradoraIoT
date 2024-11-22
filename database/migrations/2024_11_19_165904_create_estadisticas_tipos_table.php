@@ -22,6 +22,7 @@ return new class extends Migration
             $table->timestamps();
         });
     }
+    
 
     /**
      * Reverse the migrations.
@@ -30,6 +31,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('estadisticas_tipos');
+        Schema::dropIfExists('estadisticas_generales');
     }
 };
