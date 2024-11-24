@@ -4,9 +4,12 @@ namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use App\Models\Persona;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Url;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\NotifyAdmin;
 
 class ActivationController extends Controller
 {
@@ -28,7 +31,6 @@ class ActivationController extends Controller
                 ['rol_id' => $rolUsuario->id, 'updated_at' => now()] 
             );
     }
-
     return view('activationSuccess');
 }
 

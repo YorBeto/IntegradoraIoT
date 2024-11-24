@@ -6,6 +6,7 @@ use App\Http\Controllers\PersonasController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ActivationController;
 use App\Http\Controllers\TutorController;
+use App\Http\Controllers\JuegosController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -29,3 +30,8 @@ Route::post('/login', [AuthController::class, 'login']);
 Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth:api');
 
 Route::post('/alta', [TutorController::class, 'DarAlta'])->middleware('auth:api');
+
+
+//rutas de juego
+Route::get('/juegos', [JuegosController::class, 'ObtenerJuego']);
+Route::post('/iniciar', [JuegosController::class, 'iniciar'])->middleware('auth:api');

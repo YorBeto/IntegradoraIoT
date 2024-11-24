@@ -85,6 +85,7 @@
         <div class="body">
             <h2>Hola, {{ $persona->nombre }} {{ $persona->apellido_paterno }} 🎉</h2>
             <div class="illustration">
+            <img src="{{ $imagen }}" alt="L" style="width: 150px; height: auto;">
             </div>
             <p>Gracias por registrarte en nuestra app mágica. Haz clic en el botón a continuación para activar tu cuenta y empezar la diversión:</p>
             <a href="{{ $activationLink }}">Activar mi cuenta</a>
