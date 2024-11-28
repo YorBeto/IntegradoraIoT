@@ -26,3 +26,7 @@ Route::get('/stats', [EstadisticasController::class, 'DatosGenerales'])->middlew
 
 Route::get('/image', [ActivationController::class, 'show']);
 
+// routes/web.php
+use App\Http\Controllers\LedController;
+
+Route::get('/led/{state}', [LedController::class, 'toggleLed']);
