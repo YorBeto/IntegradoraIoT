@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\Mail;
 use App\Models\User;
 use App\Models\Persona; 
+use Illuminate\Support\Facades\Storage;
 
 class PersonasController extends Controller
 {
@@ -95,5 +96,117 @@ class PersonasController extends Controller
     
         return response()->json(['message' => 'Se ha enviado un enlace a tu correo para restablecer tu contraseña.'], 200);
     }
+
+    public function subirFoto(Request $request)
+    {
+        try {
+            $archivo = $request->file('archivo');
+    
+            $rutaCarpeta = '23170136/';
+    
+            
+            $user = User::find($request->input('id')); 
+            if (!$user) {
+                return response()->json(['msg' => 'Jugador no encontrado'], 404);
+            }
+            $path = Storage::disk('s3')->put($rutaCarpeta, $archivo);
+            $user->foto_perfil = $path; 
+            $user->save();
+    
+            return response()->json(['path' => $path], 201);
+        } catch (\Exception $e) {
+            return response()->json(['msg' => 'Error al subir la imagen: ' . $e->getMessage()], 500);
+        }
+    }
+    
+
+    public function verFotoPerfil(Request $request)
+{
+    $id = $request->input('id');
+    $user = User::find($id);
+
+    if (!$user || !$user->foto_perfil) {
+        return response()->json(['msg' => 'No hay foto de perfil disponible'], 404);
+    }
+
+    $rutaFoto = $user->foto_perfil;
+
+    // Verificar si el archivo existe en S3
+    if (!Storage::disk('s3')->exists($rutaFoto)) {
+        return response()->json(['msg' => 'La foto de perfil no se encuentra disponible'], 404);
+    }
+
+    $urlFoto = Storage::disk('s3')->temporaryUrl($rutaFoto, now()->addMinutes(5));
+
+    return response()->json(['url' => $urlFoto], 200);
+}
+public function verFoto($id)
+{
+    $user = User::findOrFail($id);
+
+    if (!$user->foto_perfil) {
+        return response()->json(['msg' => 'No hay foto de perfil disponible'], 404);
+    }
+
+    $rutaFoto = $user->foto_perfil;
+
+    if (!Storage::disk('s3')->exists($rutaFoto)) {
+        return response()->json(['msg' => 'La foto de perfil no se encuentra disponible'], 404);
+    }
+
+    $imagen = Storage::disk('s3')->get($rutaFoto);
+
+    $extension = pathinfo($rutaFoto, PATHINFO_EXTENSION);
+
+    switch (strtolower($extension)) {
+        case 'jpg':
+        case 'jpeg':
+            $mimeType = 'image/jpeg';
+            break;
+        case 'png':
+            $mimeType = 'image/png';
+            break;
+        case 'gif':
+            $mimeType = 'image/gif';
+            break;
+        case 'bmp':
+            $mimeType = 'image/bmp';
+            break;
+        case 'webp':
+            $mimeType = 'image/webp';
+            break;
+        default:
+            return response()->json(['msg' => 'Tipo de imagen no soportado'], 415); 
+
+    return response($imagen, 200)
+    ->header('Content-Type', $mimeType) 
+    ->header('Content-Disposition', 'inline; filename="' . basename($rutaFoto) . '"');
+    }
+}
+
+    public function editarFotoPerfil(Request $request, $id)
+    {
+        
+        $user = User::find($id);
+        
+        if (!$user) {
+            return response()->json(['msg' => 'Usuario no encontrado'], 404);
+        }
+        
+        $archivo = $request->file('archivo');
+        
+        if ($user->foto_perfil) {
+            Storage::disk('s3')->delete($user->foto_perfil);
+        }
+
+        $rutaCarpeta = '23170136/User'; // Ajusta la ruta según tus necesidades
+        $path = Storage::disk('s3')->put($rutaCarpeta, $archivo);
+        $user->foto_perfil = $path; 
+
+        $user->save();
+
+        return response()->json(['msg' => 'Imagen actualizada exitosamente'], 200);
+    }
     
 }
+

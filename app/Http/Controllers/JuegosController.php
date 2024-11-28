@@ -12,7 +12,7 @@ use app\Models\Partida;
 class JuegosController extends Controller
 {
     public function ObtenerJuego(){
-        $juegos = Juego::select('nombre', 'descripcion')->get();
+        $juegos = Juego::select('nombre', 'descripcion','imagen')->get();
         return response()->json($juegos);
     }
 
@@ -41,5 +41,12 @@ class JuegosController extends Controller
         return response()->json(['message' => 'Partida iniciada correctamente.'], 200);
 
     }
+
+    public function Juegos(){
+        $juegos = Juego::select('id_juego','nombre')->get();
+        return response()->json($juegos);
+    }
+
+    
 
 }
