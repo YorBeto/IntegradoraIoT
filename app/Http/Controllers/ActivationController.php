@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use App\Models\Persona;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Url;
@@ -29,7 +30,6 @@ class ActivationController extends Controller
                 ['rol_id' => $rolUsuario->id, 'updated_at' => now()] 
             );
     }
-
     return view('activationSuccess');
 }
 

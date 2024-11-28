@@ -5,6 +5,9 @@ use Illuminate\Mail\Mailable;
 use Illuminate\Bus\Queueable;
 use Illuminate\Queue\SerializesModels;
 use App\Models\Persona;
+use Illuminate\Support\Facades\URL;
+
+
 
 class AccountActivationMail extends Mailable
 {
@@ -12,6 +15,7 @@ class AccountActivationMail extends Mailable
 
     public $persona;
     public $activationLink;
+    public $imagen;
 
     /**
      * Create a new message instance.
@@ -23,9 +27,10 @@ class AccountActivationMail extends Mailable
     {
         $this->persona = $persona;
         $this->activationLink = $activationLink;
-        // Usamos embed() para insertar la imagen embebida
-    }
+        $this->imagen = URL::to('/').'/images/GamyG1.png'; // URL pública a la imagen
 
+    }
+    
     /**
      * Build the message.
      *
@@ -37,6 +42,8 @@ class AccountActivationMail extends Mailable
                     ->view('emails.account_activation', [
                         'persona' => $this->persona,
                         'activationLink' => $this->activationLink,
+                        'imagen' => $this->imagen,
                     ]);
+
     }
 }

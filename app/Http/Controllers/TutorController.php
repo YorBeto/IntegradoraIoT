@@ -72,4 +72,46 @@ class TutorController extends Controller
             return response()->json(['error' => 'Ocurrió un error al registrar el niño y el tutor: ' . $e->getMessage()], 500);
         }
     }
+
+    
+    public function obtenerNiñosDelTutor()
+    {
+        $user = Auth::user();
+        $id_persona = JWTAuth::parseToken()->getClaim('id_persona');
+        if (!$id_persona) {
+            return response()->json(['error' => 'No se pudo obtener el id_persona del token.'], 400);
+        }
+
+        if($id_persona==null){
+            return response()->json(['error' => 'No se pudo obtener el id_persona del token.'], 400);
+        }
+    
+        $tutor = DB::table('tutores')
+        ->join('personas', 'tutores.id_persona', '=', 'personas.id')
+        ->join('users', 'personas.usuario_id', '=', 'users.id') 
+        ->where('tutores.id_persona', $id_persona)
+        ->select('users.foto_perfil', 'tutores.id_persona', 'tutores.id_tutor', 'personas.nombre', 'personas.apellido_paterno', 'personas.apellido_materno')
+        ->first();
+    
+    
+        if (!$tutor) {
+            return response()->json(['error' => 'Tutor no encontrado.'], 404);
+        }
+    
+        $niños = DB::table('kids')
+            ->where('id_tutor', $tutor->id_tutor)
+            ->get(['id_kid','nombre', 'apellido_paterno', 'edad', 'sexo', 'foto_perfil']);
+    
+        return response()->json([
+            'tutor' => [
+                'foto_perfil' => $user->foto_perfil,
+                'id_tutor' => $tutor->id_tutor,
+                'id_persona' => $tutor->id_persona,
+                'nombre' => $tutor->nombre,
+                'apellido_paterno' => $tutor->apellido_paterno,
+            ],
+            'niños' => $niños
+        ], 200);
+    }
+    
 }
