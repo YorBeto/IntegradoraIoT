@@ -43,6 +43,13 @@ return new class extends Migration
                 'created_at' => now(),
                 'updated_at' => now()
             ],
+            [
+                'nombre' => 'Laberinto',
+                'descripcion' => 'Atraviesa los desafios de Simon, pero solo si Simon lo dice. Si no lo dice, no lo hagas. ¿Podras seguir las instrucciones de Simon?',
+                'imagen'=> 'simon_dice.jpg',
+                'created_at' => now(),
+                'updated_at' => now()
+            ],
         ]);
     }
 

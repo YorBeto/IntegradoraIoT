@@ -23,23 +23,26 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 
 
-Route::post('/restablecer-contrasena',[PersonasController::class, 'restablecercontrasena']);
+Route::post('/restablecer',[PersonasController::class, 'restablecercontrasena']);
 Route::post('/registro', [PersonasController::class, 'registro']);
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth:api');
-Route::post('/alta', [TutorController::class, 'DarAlta'])->middleware('auth:api');
 
 
 //rutas de juego
-Route::get('/juegos', [JuegosController::class, 'ObtenerJuego']);
-Route::get('/obtenerJuegos', [JuegosController::class, 'Juegos']);
+Route::get('/obtenerJuegos', [JuegosController::class, 'mostrar']);
 Route::post('/iniciar', [JuegosController::class, 'iniciar'])->middleware('auth:api');
+Route::post('/imagen', [JuegosController::class, 'imagen']);
+Route::get('/juego/{id_juego}',[JuegosController::class, 'mostrarfotojuego']);
 
 //ruta de tutores
 Route::get('/tutores', [TutorController::class, 'obtenerNiñosDelTutor'])->middleware('auth:api');
+Route::get('/obtenerTutor', [TutorController::class, 'charly'])->middleware('auth:api');
+Route::post('/alta', [TutorController::class, 'DarAlta'])->middleware('auth:api');
 
 //ruta de usuarios
-Route::post('/foto',[PersonasController::class, 'subirFoto']);
-Route::get('/perfil', [PersonasController::class, 'verFotoPerfil']);
-Route::get('/perfil/{id}', [PersonasController::class, 'verFoto']);
-Route::post('/perfil', [PersonasController::class, 'editarFotoPerfil']);
+Route::post('/foto',[PersonasController::class, 'subirfoto']);
+// Route::get('/perfil', [PersonasController::class, 'verFotoPerfil']);
+// Route::get('/perfil/{id}', [PersonasController::class, 'verFoto']);
+// Route::post('/perfil', [PersonasController::class, 'editarFotoPerfil']);
+Route::get('/perfil', [PersonasController::class, 'perfil']);
