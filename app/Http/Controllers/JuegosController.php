@@ -7,6 +7,8 @@ use App\Models\Juego;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use app\Models\Partida;
+use Illuminate\Support\Facades\Storage;
+
 
 
 class JuegosController extends Controller
@@ -43,10 +45,53 @@ class JuegosController extends Controller
     }
 
     public function Juegos(){
-        $juegos = Juego::select('id_juego','nombre')->get();
+        $juegos = Juego::select('id_juego','nombre','descripcion','imagen')->get();
         return response()->json($juegos);
     }
 
+    public function imagen(Request $request){
+        try {
+            $archivo = $request->file('archivo');
     
+            $rutaCarpeta = '23170136/Games/';
+    
+            
+            $juegos = Juego::find($request->input('id_juego')); 
+            if (!$juegos) {
+                return response()->json(['msg' => 'Juego no encontrado'], 404);
+            }
+            $path = Storage::disk('s3')->put($rutaCarpeta, $archivo);
+            $juegos->imagen= $path; 
+            $juegos->save();
+    
+            return response()->json(['path' => $path], 201);
+        } catch (\Exception $e) {
+            return response()->json(['msg' => 'Error al subir la imagen: ' . $e->getMessage()], 500);
+        }
+    }
+
+    public function mostrar()
+    {
+        try {
+            $juegos = Juego::select('id_juego', 'nombre', 'descripcion', 'imagen')
+                ->get()
+                ->map(function ($juego) {
+                    return [
+                        'id_juego' => $juego->id_juego,
+                        'nombre' => $juego->nombre,
+                        'descripcion' => $juego->descripcion,
+                        'imagen_url' => $juego->imagen_url,
+                    ];
+                });
+    
+            if ($juegos->isEmpty()) {
+                return response()->json(['msg' => 'No hay juegos disponibles'], 404);
+            }
+    
+            return response()->json(['juegos' => $juegos], 200);
+        } catch (\Exception $e) {
+            return response()->json(['msg' => 'Error al mostrar los juegos: ' . $e->getMessage()], 500);
+        }
+    }
 
 }

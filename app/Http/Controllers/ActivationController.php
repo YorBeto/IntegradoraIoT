@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Url;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Storage;
 
 class ActivationController extends Controller
 {
@@ -74,4 +75,22 @@ public function actualizarContraseña(Request $request)
 
         return $response;
     }
+
+    public function imagen(Request $request) {
+    try {
+        // Obtén el archivo de la solicitud
+        $archivo = $request->file('archivo');
+
+        $rutaCarpeta = '23170136/mails/';
+
+        $path = Storage::disk('s3')->put($rutaCarpeta, $archivo);
+
+        return response()->json(['path' => $path], 201);
+        
+    } catch (\Exception $e) {
+        return response()->json(['msg' => 'Error al subir la imagen: ' . $e->getMessage()], 500);
+    }
+}
+
+    
 }
