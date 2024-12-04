@@ -19,13 +19,10 @@ return new class extends Migration
             $table->string('valor_1', 255);
             $table->unsignedBigInteger('id_estadistica_2');
             $table->string('valor_2', 255);
-            $table->unsignedBigInteger('id_estadistica_3');
-            $table->string('valor_3', 255);
-            $table->primary(['id_partida', 'id_estadistica_1', 'id_estadistica_2', 'id_estadistica_3']);
+            $table->primary(['id_partida', 'id_estadistica_1', 'id_estadistica_2']);
             $table->foreign('id_partida')->references('id_partida')->on('partidas')->onDelete('cascade');
             $table->foreign('id_estadistica_1')->references('id_estadistica')->on('estadistica_tipos');
             $table->foreign('id_estadistica_2')->references('id_estadistica')->on('estadistica_tipos');
-            $table->foreign('id_estadistica_3')->references('id_estadistica')->on('estadistica_tipos');
             $table->timestamps();
         });
     }
