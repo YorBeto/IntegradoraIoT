@@ -10,7 +10,6 @@ use App\Models\Rol;
 use App\Models\User;
 use Illuminate\Support\Facades\Validator;
 
-
 class TutorController extends Controller
 {
     public function __construct()
@@ -23,7 +22,7 @@ class TutorController extends Controller
         $validator=Validator::make($request->all(),[
             'nombre_kid' => 'required|string',
             'apellido_paterno_kid' => 'required|string',
-            'edad_kid' => 'required|integer',
+            'fecha_nacimiento_kid' => 'required|date',
             'genero_kid' => 'required|in:Masculino,Femenino',
             'foto_perfil_kid' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
         ]);
@@ -47,12 +46,10 @@ class TutorController extends Controller
                 return response()->json(['error' => 'No se pudo obtener el id_persona del token.'], 400);
             }
 
-
-
             DB::statement('CALL altaKidYtutor(?, ?, ?, ?, ?, ?)', [
                 $request->nombre_kid,
                 $request->apellido_paterno_kid,
-                $request->edad_kid,
+                $request->fecha_nacimiento_kid,
                 $request->genero_kid,
                 $request->foto_perfil_kid ?? null,  
                 $id_persona
@@ -73,7 +70,6 @@ class TutorController extends Controller
         }
     }
 
-    
     public function obtenerNiñosDelTutor()
     {
         $user = Auth::user();
@@ -93,14 +89,15 @@ class TutorController extends Controller
         ->select('users.foto_perfil', 'tutores.id_persona', 'tutores.id_tutor', 'personas.nombre', 'personas.apellido_paterno', 'personas.apellido_materno')
         ->first();
     
-    
         if (!$tutor) {
             return response()->json(['error' => 'Tutor no encontrado.'], 404);
         }
     
         $niños = DB::table('kids')
             ->where('id_tutor', $tutor->id_tutor)
-            ->get(['id_kid','nombre', 'apellido_paterno', 'edad', 'sexo', 'foto_perfil']);
+            ->select('id_kid', 'nombre', 'apellido_paterno', 'sexo', 'foto_perfil', 
+                DB::raw('TIMESTAMPDIFF(YEAR, fecha_nacimiento, CURDATE()) AS edad'))
+            ->get();
     
         return response()->json([
             'tutor' => [
@@ -113,5 +110,4 @@ class TutorController extends Controller
             'niños' => $niños
         ], 200);
     }
-    
 }

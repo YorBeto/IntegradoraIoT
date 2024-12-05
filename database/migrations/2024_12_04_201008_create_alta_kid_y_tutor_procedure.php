@@ -16,7 +16,7 @@ class CreateAltaKidYTutorProcedure extends Migration
             CREATE PROCEDURE altaKidYtutor(
                 IN p_nombre_kid VARCHAR(50),
                 IN p_apellido_paterno_kid VARCHAR(50),
-                IN p_edad_kid INT,
+                IN p_fecha_nacimiento_kid DATE,
                 IN p_sexo_kid ENUM(\'Masculino\',\'Femenino\'),
                 IN p_foto_perfil_kid VARCHAR(255),
                 IN p_id_persona BIGINT
@@ -43,8 +43,8 @@ class CreateAltaKidYTutorProcedure extends Migration
                 END IF;
 
                 -- Insertar el niño en la tabla kids
-                INSERT INTO kids (nombre, apellido_paterno, sexo, edad, foto_perfil, id_tutor, created_at, updated_at)
-                VALUES (p_nombre_kid, p_apellido_paterno_kid, p_sexo_kid, p_edad_kid, p_foto_perfil_kid, v_id_tutor, NOW(), NOW());
+                INSERT INTO kids (nombre, apellido_paterno, sexo, fecha_nacimiento, foto_perfil, id_tutor, created_at, updated_at)
+                VALUES (p_nombre_kid, p_apellido_paterno_kid, p_sexo_kid, p_fecha_nacimiento_kid, p_foto_perfil_kid, v_id_tutor, NOW(), NOW());
 
                 -- Confirmar la transacción
                 COMMIT;

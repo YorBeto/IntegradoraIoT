@@ -13,7 +13,7 @@ class Kid extends Model
 
     protected $fillable = [
         'nombre',
-        'edad',
+        'fecha_nacimiento',
         'foto_perfil',
         'id_tutor',
     ];

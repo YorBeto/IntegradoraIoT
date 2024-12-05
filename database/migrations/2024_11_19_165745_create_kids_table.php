@@ -18,7 +18,7 @@ return new class extends Migration
             $table->string('nombre', 50);
             $table->string('apellido_paterno', 50);
             $table->enum('sexo', ['Masculino', 'Femenino']);
-            $table->integer('edad');
+            $table->date('fecha_nacimiento');
             $table->string('foto_perfil', 255)->nullable();
             $table->unsignedBigInteger('id_tutor');
             $table->foreign('id_tutor')->references('id_tutor')->on('tutores')->onDelete('cascade');
