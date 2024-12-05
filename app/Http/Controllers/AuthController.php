@@ -19,7 +19,6 @@ class AuthController extends Controller
     // Buscar usuario por email
     $user = User::where('email', $credentials['email'])->first();
 
-    // Validar que el usuario exista y su cuenta esté activada
     if (!$user || !Hash::check($credentials['password'], $user->password)) {
         return response()->json(['error' => 'Credenciales inválidas'], 401);
     }
@@ -31,12 +30,14 @@ class AuthController extends Controller
     $persona = $user->persona;
     $nombre = $persona ? $persona->nombre : null;
     $apellido = $persona ? $persona->apellido_paterno: null;
+    $id_persona = $persona ? $persona->id : null;
 
     $token = JWTAuth::claims([
         'email' => $user->email,
         'id' => $user->id,
         'nombre' => $nombre,
         'apellido' => $apellido,
+        'id_persona' => $id_persona,
     ])->fromUser($user);
 
     return response()->json([
@@ -55,5 +56,4 @@ class AuthController extends Controller
     
         return response()->json(['message' => 'Sesión cerrada']);
     }
-
 }

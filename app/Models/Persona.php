@@ -25,4 +25,10 @@ class Persona extends Model
     {
         return $this->belongsTo(User::class, 'usuario_id');
     }
+
+    public function tutor()
+    {
+        return $this->hasOne(Tutor::class, 'id_persona');
+    }
+
 }
