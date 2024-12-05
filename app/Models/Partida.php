@@ -9,7 +9,7 @@ class Partida extends Model
 {
     use HasFactory;
 
-    protected $table = 'partida';
+    protected $table = 'partidas';
 
     protected $fillable = ['id_kid', 'id_juego', 'fecha', 'hora_inicio', 'hora_fin'];
 

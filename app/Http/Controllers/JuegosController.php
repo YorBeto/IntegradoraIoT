@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\Juego;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
-use app\Models\Partida;
+use App\Models\Partida;
 use Illuminate\Support\Facades\Storage;
 
 
@@ -21,8 +21,8 @@ class JuegosController extends Controller
     public function iniciar( Request $request){
 
         $validator = Validator::make($request->all(), [
-            'id_juego' => 'required|exists:juegos,id',
-            'id_kid' => 'required|exists:kids,id',
+            'id_juego' => 'required|exists:juegos,id_juego',
+            'id_kid' => 'required|exists:kids,id_kid',
         ]);
 
         if ($validator->fails()) {
@@ -33,7 +33,7 @@ class JuegosController extends Controller
         }
 
         $partida = new Partida();
-        $partida->juego_id = $request->juego_id;
+        $partida->id_juego = $request->id_juego;
         $partida->id_kid = $request->id_kid;
         $partida->fecha = now();
         $partida->hora_inicio = now();

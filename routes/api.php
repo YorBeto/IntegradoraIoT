@@ -31,7 +31,7 @@ Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth:api'
 
 //rutas de juego
 Route::get('/obtenerJuegos', [JuegosController::class, 'mostrar']);
-Route::post('/iniciar', [JuegosController::class, 'iniciar'])->middleware('auth:api');
+Route::post('/iniciar', [JuegosController::class, 'iniciar']);
 Route::post('/imagen', [JuegosController::class, 'imagen']);
 Route::get('/juego/{id_juego}',[JuegosController::class, 'mostrarfotojuego']);
 
@@ -45,4 +45,9 @@ Route::post('/foto',[PersonasController::class, 'subirfoto']);
 // Route::get('/perfil', [PersonasController::class, 'verFotoPerfil']);
 // Route::get('/perfil/{id}', [PersonasController::class, 'verFoto']);
 // Route::post('/perfil', [PersonasController::class, 'editarFotoPerfil']);
-Route::get('/perfil', [PersonasController::class, 'perfil']);
+Route::post('/perfil', [PersonasController::class, 'perfil']);
+
+
+Route::get('/perfil',function(Request $request){
+    return response()->json(['message' => 'Chinga tu madre y ven a discord'], 201);
+});
