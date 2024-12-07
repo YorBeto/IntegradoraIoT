@@ -19,7 +19,7 @@ class TutorController extends Controller
 
     public function DarAlta(Request $request)
     {
-        $validator=Validator::make($request->all(),[
+        $validator = Validator::make($request->all(), [
             'nombre_kid' => 'required|string',
             'apellido_paterno_kid' => 'required|string',
             'fecha_nacimiento_kid' => 'required|date',
@@ -46,14 +46,31 @@ class TutorController extends Controller
                 return response()->json(['error' => 'No se pudo obtener el id_persona del token.'], 400);
             }
 
+            // Registrar al niño y tutor usando el procedimiento almacenado
             DB::statement('CALL altaKidYtutor(?, ?, ?, ?, ?, ?)', [
                 $request->nombre_kid,
                 $request->apellido_paterno_kid,
                 $request->fecha_nacimiento_kid,
                 $request->genero_kid,
-                $request->foto_perfil_kid ?? null,  
+                $request->foto_perfil_kid ?? null,
                 $id_persona
             ]);
+
+            // Obtener el ID del niño recién registrado
+            $id_kid = DB::table('kids')->latest('id_kid')->first()->id_kid;
+
+            // Registrar las estadísticas generales para cada juego
+            $juegos = DB::table('juegos')->get();
+            foreach ($juegos as $juego) {
+                DB::table('estadisticas_generales')->insert([
+                    'id_kid' => $id_kid,
+                    'id_juego' => $juego->id_juego,
+                    'total_tiempo_jugado' => '00:00:00',
+                    'numero_partidas' => 0,
+                    'created_at' => now(),
+                    'updated_at' => now()
+                ]);
+            }
 
             $rolUsuario = Rol::where('nombre', 'tutor')->first();
             if ($rolUsuario) {
@@ -78,16 +95,16 @@ class TutorController extends Controller
             return response()->json(['error' => 'No se pudo obtener el id_persona del token.'], 400);
         }
 
-        if($id_persona==null){
+        if($id_persona == null){
             return response()->json(['error' => 'No se pudo obtener el id_persona del token.'], 400);
         }
     
         $tutor = DB::table('tutores')
-        ->join('personas', 'tutores.id_persona', '=', 'personas.id')
-        ->join('users', 'personas.usuario_id', '=', 'users.id') 
-        ->where('tutores.id_persona', $id_persona)
-        ->select('users.foto_perfil', 'tutores.id_persona', 'tutores.id_tutor', 'personas.nombre', 'personas.apellido_paterno', 'personas.apellido_materno')
-        ->first();
+            ->join('personas', 'tutores.id_persona', '=', 'personas.id')
+            ->join('users', 'personas.usuario_id', '=', 'users.id') 
+            ->where('tutores.id_persona', $id_persona)
+            ->select('users.foto_perfil', 'tutores.id_persona', 'tutores.id_tutor', 'personas.nombre', 'personas.apellido_paterno', 'personas.apellido_materno')
+            ->first();
     
         if (!$tutor) {
             return response()->json(['error' => 'Tutor no encontrado.'], 404);

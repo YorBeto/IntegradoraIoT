@@ -13,58 +13,19 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('estadistica_tipos', function (Blueprint $table) {
+        Schema::create('estadisticas_tipos', function (Blueprint $table) {
             $table->id('id_estadistica');
             $table->string('nombre', 50);
             $table->enum('tipo_dato', ['INT', 'FLOAT', 'STRING', 'TIME']);
-            $table->unsignedBigInteger('id_juego');
-            $table->foreign('id_juego')->references('id_juego')->on('juegos')->onDelete('cascade');
             $table->timestamps();
         });
 
-        DB::table('estadistica_tipos')->insert([
-            [
-                'nombre' => 'Aciertos',
-                'tipo_dato' => 'INT',
-                'id_juego'=> 1,
-                'created_at' => now(),
-                'updated_at' => now()
-            ],
-            [
-                'nombre' => 'Errores',
-                'tipo_dato' => 'INT',
-                'id_juego'=> 1,
-                'created_at' => now(),
-                'updated_at' => now()
-            ],
-            [
-                'nombre' => 'Duración total',
-                'tipo_dato' => 'TIME',
-                'id_juego'=> 2,
-                'created_at' => now(),
-                'updated_at' => now()
-            ],
-            [
-                'nombre' => 'Luces Rojas Superadas',
-                'tipo_dato' => 'INT',
-                'id_juego'=> 2,
-                'created_at' => now(),
-                'updated_at' => now()
-            ],
-            [
-                'nombre' => 'Aciertos',
-                'tipo_dato' => 'INT',
-                'id_juego'=> 3,
-                'created_at' => now(),
-                'updated_at' => now()
-            ],
-            [
-                'nombre' => 'Duración total',
-                'tipo_dato' => 'TIME',
-                'id_juego'=> 3,
-                'created_at' => now(),
-                'updated_at' => now()
-            ]
+        DB::table('estadisticas_tipos')->insert([
+            ['id_estadistica' => 1, 'nombre' => 'Aciertos', 'tipo_dato' => 'INT', 'created_at' => now(), 'updated_at' => now()],
+            ['id_estadistica' => 2, 'nombre' => 'Tiempo', 'tipo_dato' => 'TIME', 'created_at' => now(), 'updated_at' => now()],
+            ['id_estadistica' => 3, 'nombre' => 'Mejor puntuacion', 'tipo_dato' => 'INT', 'created_at' => now(), 'updated_at' => now()],
+            ['id_estadistica' => 4, 'nombre' => 'Luces Rojas superadas', 'tipo_dato' => 'INT', 'created_at' => now(), 'updated_at' => now()],
+            ['id_estadistica' => 5, 'nombre' => 'Mejor tiempo', 'tipo_dato' => 'INT', 'created_at' => now(), 'updated_at' => now()]
         ]);
     }
     
@@ -76,6 +37,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('estadisticas_generales');
+        Schema::dropIfExists('estadisticas_tipos');
     }
 };
