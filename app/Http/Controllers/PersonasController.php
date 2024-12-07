@@ -137,6 +137,42 @@ class PersonasController extends Controller
         
     }
 
+    public function editarperfil(Request $request){
+        $validator = Validator::make($request->all(), [
+            'nombre' => 'required|string',
+            'apellido_paterno' => 'required|string',
+            'apellido_materno' => 'nullable|string',
+            'fecha_nacimiento' => 'required|date',
+            'sexo' => 'required|in:Masculino,Femenino',
+            'telefono' => 'nullable|string|max:20',
+            'foto_perfil' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+        ]);
+        
+        $user=User::find($request->input('id'));
+
+        if ($validator->fails()) {
+            return response()->json([
+                'message' => 'Errores de validación',
+                'errors' => $validator->errors()
+            ], 422);
+        }
+
+        $user->persona->nombre=$request->nombre;
+        $user->persona->apellido_paterno=$request->apellido_paterno;
+        $user->persona->apellido_materno=$request->apellido_materno;
+        $user->persona->fecha_nacimiento=$request->fecha_nacimiento;
+        $user->persona->sexo=$request->sexo;
+        $user->persona->telefono=$request->telefono;
+        $user->foto_perfil=$request->foto_perfil ?? null;
+        $user->persona->save();
+
+        return response()->json(['message' => 'Perfil actualizado correctamente'], 200);
+
+
+
+        
+    }
+
     
 
 }

@@ -14,12 +14,12 @@ use Illuminate\Support\Facades\Storage;
 class JuegosController extends Controller
 {
     public function ObtenerJuego(){
-        $juegos = Juego::select('nombre', 'descripcion','imagen')->get();
+        $juegos = Juego::select('id_juego','nombre', 'descripcion','imagen')->get();
         return response()->json($juegos);
     }
 
-    public function iniciar( Request $request){
-
+    public function iniciar(Request $request)
+    {
         $validator = Validator::make($request->all(), [
             'id_juego' => 'required|exists:juegos,id_juego',
             'id_kid' => 'required|exists:kids,id_kid',
@@ -41,7 +41,62 @@ class JuegosController extends Controller
         $partida->save();
 
         return response()->json(['message' => 'Partida iniciada correctamente.'], 200);
+    }
 
+    public function terminar(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'id_partida' => 'required|exists:partidas,id_partida'
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'message' => 'Errores de validación',
+                'errors' => $validator->errors()
+            ], 400);
+        }
+
+        try {
+            // Obtener la información de la partida
+            $partida = DB::table('partidas')->where('id_partida', $request->id_partida)->first();
+
+            if ($partida && !$partida->hora_fin) {
+                // Calcular la duración de la partida
+                $hora_inicio = new \DateTime($partida->hora_inicio);
+                $hora_fin = new \DateTime();
+                $intervalo = $hora_inicio->diff($hora_fin);
+                $duracion = $intervalo->format('%H:%I:%S');
+
+                // Actualizar la hora_fin de la partida
+                DB::table('partidas')
+                    ->where('id_partida', $request->id_partida)
+                    ->update(['hora_fin' => now()]);
+
+                // Actualizar estadisticas_generales
+                $estadisticas = DB::table('estadisticas_generales')
+                    ->where('id_kid', $partida->id_kid)
+                    ->where('id_juego', $partida->id_juego)
+                    ->first();
+
+                if ($estadisticas) {
+                    $total_tiempo_jugado = new \DateTime($estadisticas->total_tiempo_jugado);
+                    $total_tiempo_jugado->add(new \DateInterval('PT' . $intervalo->h . 'H' . $intervalo->i . 'M' . $intervalo->s . 'S'));
+
+                    DB::table('estadisticas_generales')
+                        ->where('id_kid', $partida->id_kid)
+                        ->where('id_juego', $partida->id_juego)
+                        ->update([
+                            'numero_partidas' => $estadisticas->numero_partidas + 1,
+                            'total_tiempo_jugado' => $total_tiempo_jugado->format('H:i:s'),
+                            'updated_at' => now()
+                        ]);
+                }
+            }
+
+            return response()->json(['message' => 'Partida finalizada correctamente.'], 200);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Ocurrió un error al finalizar la partida: ' . $e->getMessage()], 500);
+        }
     }
 
     public function Juegos(){
@@ -91,9 +146,6 @@ class JuegosController extends Controller
 }
 
     
-
-    
-
 public function mostrar()
 {
     try {

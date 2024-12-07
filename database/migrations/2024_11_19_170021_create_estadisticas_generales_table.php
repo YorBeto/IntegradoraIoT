@@ -16,7 +16,7 @@ return new class extends Migration
         Schema::create('estadisticas_generales', function (Blueprint $table) {
             $table->unsignedBigInteger('id_kid');
             $table->unsignedBigInteger('id_juego');
-            $table->float('tiempo_jugado_total')->default(0);
+            $table->time('total_tiempo_jugado')->default('00:00:00');
             $table->integer('numero_partidas')->default(0);
             $table->primary(['id_kid', 'id_juego']);
             $table->foreign('id_kid')->references('id_kid')->on('kids')->onDelete('cascade');

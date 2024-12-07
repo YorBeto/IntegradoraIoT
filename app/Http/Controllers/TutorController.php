@@ -20,10 +20,10 @@ class TutorController extends Controller
 
     public function DarAlta(Request $request)
     {
-        $validator=Validator::make($request->all(),[
+        $validator = Validator::make($request->all(), [
             'nombre_kid' => 'required|string',
             'apellido_paterno_kid' => 'required|string',
-            'edad_kid' => 'required|integer',
+            'fecha_nacimiento_kid' => 'required|date',
             'genero_kid' => 'required|in:Masculino,Femenino',
             'foto_perfil_kid' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
         ]);
@@ -36,7 +36,8 @@ class TutorController extends Controller
         }
 
         try {
-            $user = Auth::user();            
+            $user = Auth::user();
+            
             if ($user->email_verified_at == null) {
                 return response()->json(['error' => 'Cuenta no activada, no puedes dar de alta'], 401);
             }
@@ -46,16 +47,31 @@ class TutorController extends Controller
                 return response()->json(['error' => 'No se pudo obtener el id_persona del token.'], 400);
             }
 
-
-
+            // Registrar al niño y tutor usando el procedimiento almacenado
             DB::statement('CALL altaKidYtutor(?, ?, ?, ?, ?, ?)', [
                 $request->nombre_kid,
                 $request->apellido_paterno_kid,
-                $request->edad_kid,
+                $request->fecha_nacimiento_kid,
                 $request->genero_kid,
-                $request->foto_perfil_kid ?? null,  
+                $request->foto_perfil_kid ?? null,
                 $id_persona
             ]);
+
+            // Obtener el ID del niño recién registrado
+            $id_kid = DB::table('kids')->latest('id_kid')->first()->id_kid;
+
+            // Registrar las estadísticas generales para cada juego
+            $juegos = DB::table('juegos')->get();
+            foreach ($juegos as $juego) {
+                DB::table('estadisticas_generales')->insert([
+                    'id_kid' => $id_kid,
+                    'id_juego' => $juego->id_juego,
+                    'total_tiempo_jugado' => '00:00:00',
+                    'numero_partidas' => 0,
+                    'created_at' => now(),
+                    'updated_at' => now()
+                ]);
+            }
 
             $rolUsuario = Rol::where('nombre', 'tutor')->first();
             if ($rolUsuario) {
