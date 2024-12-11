@@ -21,11 +21,11 @@ return new class extends Migration
         });
 
         DB::table('estadisticas_tipos')->insert([
-            ['id_estadistica' => 1, 'nombre' => 'Aciertos', 'tipo_dato' => 'INT', 'created_at' => now(), 'updated_at' => now()],
+            ['id_estadistica' => 1, 'nombre' => 'Puntuacion', 'tipo_dato' => 'INT', 'created_at' => now(), 'updated_at' => now()],
             ['id_estadistica' => 2, 'nombre' => 'Tiempo', 'tipo_dato' => 'TIME', 'created_at' => now(), 'updated_at' => now()],
             ['id_estadistica' => 3, 'nombre' => 'Mejor puntuacion', 'tipo_dato' => 'INT', 'created_at' => now(), 'updated_at' => now()],
             ['id_estadistica' => 4, 'nombre' => 'Luces Rojas superadas', 'tipo_dato' => 'INT', 'created_at' => now(), 'updated_at' => now()],
-            ['id_estadistica' => 5, 'nombre' => 'Mejor tiempo', 'tipo_dato' => 'INT', 'created_at' => now(), 'updated_at' => now()]
+            ['id_estadistica' => 5, 'nombre' => 'Mejor tiempo', 'tipo_dato' => 'TIME', 'created_at' => now(), 'updated_at' => now()]
         ]);
     }
     

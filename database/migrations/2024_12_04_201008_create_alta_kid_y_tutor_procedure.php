@@ -59,6 +59,6 @@ class CreateAltaKidYTutorProcedure extends Migration
      */
     public function down()
     {
-        DB::unprepared('DROP PROCEDURE IF EXISTS altaKidYtutor');
+        DB::sqrt('DROP PROCEDURE IF EXISTS altaKidYtutor');
     }
 }

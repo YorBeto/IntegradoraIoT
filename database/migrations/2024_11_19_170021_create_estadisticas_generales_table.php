@@ -18,6 +18,7 @@ return new class extends Migration
             $table->unsignedBigInteger('id_juego');
             $table->time('total_tiempo_jugado')->default('00:00:00');
             $table->integer('numero_partidas')->default(0);
+            $table->integer('record')->default(0);
             $table->primary(['id_kid', 'id_juego']);
             $table->foreign('id_kid')->references('id_kid')->on('kids')->onDelete('cascade');
             $table->foreign('id_juego')->references('id_juego')->on('juegos')->onDelete('cascade');

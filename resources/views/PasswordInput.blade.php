@@ -62,19 +62,6 @@
         .body input:focus {
             border-color: #8636CE;
         }
-        .password-container {
-            position: relative;
-            display: flex;
-            align-items: center;
-        }
-        .password-container button {
-            position: absolute;
-            right: 10px;
-            background: none;
-            border: none;
-            cursor: pointer;
-            padding: 5px;
-        }
         .body button {
             padding: 12px 24px;
             background-color: #8636CE;
@@ -101,13 +88,6 @@
         .footer p {
             margin: 0;
         }
-        .bottom-left-image {
-            position: absolute;
-            bottom: 10px;
-            left: 10px;
-            width: 100px;
-            height: auto;
-        }
     </style>
 </head>
 <body>
@@ -123,17 +103,11 @@
                 <label for="password">Nueva Contraseña:</label>
                 <div class="password-container">
                     <input type="password" id="password" name="password" required>
-                    <button type="button" onclick="togglePassword('password', this)">
-                        <img src="/public/images/ojo-abierto.png" alt="Mostrar Contraseña" id="toggle-icon-password" width="20">
-                    </button>
                 </div>
                 
                 <label for="password_confirmation">Confirmar Contraseña:</label>
                 <div class="password-container">
                     <input type="password" id="password_confirmation" name="password_confirmation" required>
-                    <button type="button" onclick="togglePassword('password_confirmation', this)">
-                        <img src="/public/images/ojo-abierto.png" alt="Mostrar Contraseña" id="toggle-icon-confirmation" width="20">
-                    </button>
                 </div>
                 
                 <button type="submit">Restablecer Contraseña</button>
@@ -143,25 +117,5 @@
             <p>Gracias por confiar en nosotros</p>
         </div>
     </div>
-    <img src="/public/images/Gamy_arriba_ojos.png" alt="Imagen decorativa" class="bottom-left-image" id="bottom-left-image">
-    <script>
-        function togglePassword(inputId, button) {
-            const input = document.getElementById(inputId);
-            const icon = button.querySelector('img');
-            const bottomImage = document.getElementById('bottom-left-image');
-            
-            if (input.type === 'password') {
-                input.type = 'text';
-                icon.src = '/public/images/ojo-cerrado.png';
-                icon.alt = 'Ocultar Contraseña';
-                bottomImage.src = '/public/images/Gamy_cerrados_ojos.png'; // Cambiar a la imagen 2
-            } else {
-                input.type = 'password';
-                icon.src = '/public/images/ojo-abierto.png';
-                icon.alt = 'Mostrar Contraseña';
-                bottomImage.src = '/public/images/Gamy_arriba_ojos.png'; // Regresar a la imagen 1
-            }
-        }
-    </script>
 </body>
 </html>

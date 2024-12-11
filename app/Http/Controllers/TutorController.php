@@ -67,6 +67,7 @@ class TutorController extends Controller
                     'id_juego' => $juego->id_juego,
                     'total_tiempo_jugado' => '00:00:00',
                     'numero_partidas' => 0,
+                    'record' => 0,
                     'created_at' => now(),
                     'updated_at' => now()
                 ]);

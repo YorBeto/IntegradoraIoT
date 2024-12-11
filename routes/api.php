@@ -7,6 +7,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ActivationController;
 use App\Http\Controllers\TutorController;
 use App\Http\Controllers\JuegosController;
+use App\Http\Controllers\GameOneController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -28,11 +29,12 @@ Route::post('/registro', [PersonasController::class, 'registro']);
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth:api');
 
-
 //rutas de juego
 Route::get('/obtenerJuegos', [JuegosController::class, 'mostrar']);
-Route::post('/iniciar', [JuegosController::class, 'iniciar'])->middleware('auth:api');
+Route::post('/iniciar', [GameOneController::class, 'iniciar'])->middleware('auth:api');
+Route::post('/terminarGame', [GameOneController::class, 'terminarGame'])->middleware('auth:api');
 Route::post('/terminar', [JuegosController::class, 'terminar'])->middleware('auth:api');
+Route::post('/estadisticas', [JuegosController::class, 'obtenerEstadisticas'])->middleware('auth:api');
 Route::post('/imagen', [JuegosController::class, 'imagen']);
 Route::get('/juego/{id_juego}',[JuegosController::class, 'mostrarfotojuego']);
 
@@ -46,4 +48,11 @@ Route::post('/foto',[PersonasController::class, 'subirfoto']);
 // Route::get('/perfil', [PersonasController::class, 'verFotoPerfil']);
 // Route::get('/perfil/{id}', [PersonasController::class, 'verFoto']);
 // Route::post('/perfil', [PersonasController::class, 'editarFotoPerfil']);
-Route::get('/perfil', [PersonasController::class, 'perfil']);   
+Route::post('/perfil', [PersonasController::class, 'perfil'])->middleware('auth:api');
+Route::put('/perfil', [PersonasController::class, 'editarperfil'])->middleware('auth:api');
+Route::post('/editarfoto', [PersonasController::class, 'editarfoto'])->middleware('auth:api');
+
+
+Route::get('/perfil',function(Request $request){
+    return response()->json(['message' => 'Chinga tu madre y ven a discord'], 201);
+});

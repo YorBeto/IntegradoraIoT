@@ -65,15 +65,6 @@
             color: #8636CE;
             border: 2px solid #8636CE;
         }
-        .illustration {
-            text-align: center;
-            margin: 20px 0;
-        }
-        .illustration img {
-            width: 120px;
-            border-radius: 15px;
-            border: 2px solid #ADD5D5;
-        }
         .footer {
             background-color: #ADD5D5;
             color: #333;
@@ -93,9 +84,6 @@
         </div>
         <div class="body">
             <h2>Hola, {{ $persona->nombre }} {{ $persona->apellido_paterno }} 🎉</h2>
-            <div class="illustration">
-                <img src="{{ url('/image') }}" alt="Imagen de bienvenida">
-            </div>
             <p>Gracias por registrarte en nuestra app mágica. Haz clic en el botón a continuación para activar tu cuenta y comenzar la diversión:</p>
             <a href="{{ $activationLink }}">Activar mi cuenta</a>
         </div>

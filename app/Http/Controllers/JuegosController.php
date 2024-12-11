@@ -17,55 +17,50 @@ class JuegosController extends Controller
         return response()->json($juegos);
     }
 
-    public function iniciar(Request $request)
+    public function terminar()
     {
-        $validator = Validator::make($request->all(), [
-            'id_juego' => 'required|exists:juegos,id_juego',
-            'id_kid' => 'required|exists:kids,id_kid',
-        ]);
-
-        if ($validator->fails()) {
-            return response()->json([
-                'message' => 'Errores de validación',
-                'errors' => $validator->errors()
-            ], 400);
-        }
-
-        $partida = new Partida();
-        $partida->id_juego = $request->id_juego;
-        $partida->id_kid = $request->id_kid;
-        $partida->fecha = now();
-        $partida->hora_inicio = now();
-        $partida->hora_fin = null;
-        $partida->save();
-
-        return response()->json(['message' => 'Partida iniciada correctamente.'], 200);
-    }
-
-    public function terminar(Request $request)
-    {
-        $validator = Validator::make($request->all(), [
-            'id_partida' => 'required|exists:partidas,id_partida'
-        ]);
-
-        if ($validator->fails()) {
-            return response()->json([
-                'message' => 'Errores de validación',
-                'errors' => $validator->errors()
-            ], 400);
-        }
-
         try {
-            DB::table('partidas')
-                ->where('id_partida', $request->id_partida)
-                ->whereNull('hora_fin')
-                ->update(['hora_fin' => now()]);
-
+            // Obtener la última partida registrada
+            $partida = DB::table('partidas')->latest('id_partida')->first();
+    
+            if ($partida && !$partida->hora_fin) {
+                // Calcular la duración de la partida
+                $hora_inicio = new \DateTime($partida->hora_inicio);
+                $hora_fin = new \DateTime();
+                $intervalo = $hora_inicio->diff($hora_fin);
+                $duracion = $intervalo->format('%H:%I:%S');
+    
+                // Actualizar la hora_fin de la partida
+                DB::table('partidas')
+                    ->where('id_partida', $partida->id_partida)
+                    ->update(['hora_fin' => now()]);
+    
+                // Actualizar estadisticas_generales
+                $estadisticas = DB::table('estadisticas_generales')
+                    ->where('id_kid', $partida->id_kid)
+                    ->where('id_juego', $partida->id_juego)
+                    ->first();
+    
+                if ($estadisticas) {
+                    $total_tiempo_jugado = new \DateTime($estadisticas->total_tiempo_jugado);
+                    $total_tiempo_jugado->add(new \DateInterval('PT' . $intervalo->h . 'H' . $intervalo->i . 'M' . $intervalo->s . 'S'));
+    
+                    DB::table('estadisticas_generales')
+                        ->where('id_kid', $partida->id_kid)
+                        ->where('id_juego', $partida->id_juego)
+                        ->update([
+                            'numero_partidas' => $estadisticas->numero_partidas + 1,
+                            'total_tiempo_jugado' => $total_tiempo_jugado->format('H:i:s'),
+                            'updated_at' => now()
+                        ]);
+                }
+            }
+    
             return response()->json(['message' => 'Partida finalizada correctamente.'], 200);
         } catch (\Exception $e) {
             return response()->json(['error' => 'Ocurrió un error al finalizar la partida: ' . $e->getMessage()], 500);
         }
-    }
+    }    
 
     public function Juegos()
     {
@@ -135,6 +130,32 @@ class JuegosController extends Controller
             return response()->json(['juegos' => $juegos], 200, [], JSON_UNESCAPED_SLASHES);
         } catch (\Exception $e) {
             return response()->json(['msg' => 'Error al mostrar los juegos: ' . $e->getMessage()], 500);
+        }
+    }
+
+    public function obtenerEstadisticas(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'nombre_kid' => 'required|string|max:50',
+            'apellido_paterno_kid' => 'required|string|max:50'
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'message' => 'Errores de validación',
+                'errors' => $validator->errors()
+            ], 400);
+        }
+
+        try {
+            $nombre_kid = $request->input('nombre_kid');
+            $apellido_paterno_kid = $request->input('apellido_paterno_kid');
+
+            $estadisticas = DB::select('CALL obtenerEstadisticasKid(?, ?)', [$nombre_kid, $apellido_paterno_kid]);
+
+            return response()->json(['estadisticas' => $estadisticas], 200);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Ocurrió un error al obtener las estadísticas: ' . $e->getMessage()], 500);
         }
     }
 }
